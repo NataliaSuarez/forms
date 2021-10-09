@@ -1,77 +1,62 @@
 import { useState } from "react";
-
-/// CONTROLLED COMPONENTS - multiples valores
+import Input from "./components/Input";
+import Card from "./components/Card";
+import Container from "./components/Container";
+import Button from "./components/Button";
+import useForm from "./hooks/useForm";
 
 const App = () => {
-  const [value, setValue] = useState({
-    nombre: "default name", /// initial state
-    descripcion: "",
-    select: "", // can be an option by default -> `firstoption`
-    check: false,
-    radio: "option1", //default radio button value
+  const [form, handleChange, reset] = useForm({
+    name: "",
+    lastname: "",
+    email: "",
   });
-  const handleChange = ({ target }) => {
-    /// handle multiple values with `[target.name]`
-    /// and setted value
-    /// or checked in checkbox case
-    setValue((state) => ({
-      ...state,
-      [target.name]: target.type === "checkbox" ? target.checked : target.value,
-    }));
+  const [users, setUsers] = useState([]);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setUsers([...users, form]);
+    reset();
   };
-  console.log(value);
+  // console.log(form, users);
   return (
-    <div>
-      <input
-        type="text"
-        name="nombre"
-        value={value.nombre}
-        onChange={handleChange}
-      />
-      <textarea
-        name="descripcion"
-        value={value.descripcion}
-        onChange={handleChange}
-      />
-      <select value={value.select} name="select" onChange={handleChange}>
-        <option value="">-- seleccione --</option>
-        <option value="firstoption">First option</option>
-        <option value="secondoption">Second option</option>
-        <option value="thirdoption">Third option</option>
-      </select>
-      <input
-        type="checkbox"
-        name="check"
-        onChange={handleChange}
-        checked={value.check}
-      />
-      <div>
-        <label>something</label>
-        <input
-          type="radio"
-          value="option1"
-          name="radio"
-          onChange={handleChange}
-          checked={value.radio === "option1"}
-        />
-        option 1
-        <input
-          type="radio"
-          value="option2"
-          name="radio"
-          onChange={handleChange}
-          checked={value.radio === "option2"}
-        />
-        option 2
-        <input
-          type="radio"
-          value="option3"
-          name="radio"
-          onChange={handleChange}
-          checked={value.radio === "option3"}
-        />
-        option 3
-      </div>
+    <div style={{ marginTop: "15%" }}>
+      <Container>
+        <Card>
+          <div style={{ padding: 20 }}>
+            <form onSubmit={handleSubmit}>
+              <Input
+                label="Nombre"
+                field="name"
+                placeholder="Nombre"
+                value={form.name}
+                onChange={handleChange}
+              />
+              <Input
+                label="Apellido"
+                field="lastname"
+                placeholder="Apellido"
+                value={form.lastname}
+                onChange={handleChange}
+              />
+              <Input
+                label="Correo"
+                field="email"
+                placeholder="example@mail.com"
+                value={form.email}
+                onChange={handleChange}
+              />
+              <Button>Enviar</Button>
+            </form>
+          </div>
+        </Card>
+        <Card>
+          <ul>
+            {users.map((user) => (
+              <li>{`${user.name} ${user.lastname}: ${user.email}`}</li>
+            ))}
+          </ul>
+        </Card>
+      </Container>
     </div>
   );
 };
